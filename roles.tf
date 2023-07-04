@@ -28,17 +28,21 @@ resource "mysql_role" "role_rw" {
 resource "mysql_grant" "role_ro" {
   for_each = local.databases
 
-  role       = mysql_role.role_ro.name
+  role       = "role_ro"
+  host       = "%"
   database   = each.value
   privileges = local.privileges_ro
+  table      = "*"
 }
 
 resource "mysql_grant" "role_rw" {
   for_each = local.databases
 
-  role       = mysql_role.role_rw.name
+  role       = "role_rw"
+  host       = "%"
   database   = each.value
   privileges = local.privileges_rw
+  table      = "*"
 }
 
 resource "mysql_user" "users" {
@@ -57,7 +61,8 @@ resource "mysql_grant" "users_ro" {
   user     = each.value.role
   host     = "%"
   database = each.value.database
-  roles    = [mysql_role.role_ro.name]
+  roles    = ["role_ro"]
+  table    = "*"
 }
 
 resource "mysql_grant" "users_rw" {
@@ -68,5 +73,6 @@ resource "mysql_grant" "users_rw" {
   user     = each.value.role
   host     = "%"
   database = each.value.database
-  roles    = [mysql_role.role_rw.name]
+  roles    = ["role_rw"]
+  table    = "*"
 }
