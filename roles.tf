@@ -29,7 +29,6 @@ resource "mysql_grant" "role_ro" {
   for_each = local.databases
 
   role       = "role_ro"
-  host       = "%"
   database   = each.value
   privileges = local.privileges_ro
   table      = "*"
@@ -39,7 +38,6 @@ resource "mysql_grant" "role_rw" {
   for_each = local.databases
 
   role       = "role_rw"
-  host       = "%"
   database   = each.value
   privileges = local.privileges_rw
   table      = "*"
