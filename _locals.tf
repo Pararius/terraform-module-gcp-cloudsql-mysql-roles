@@ -24,6 +24,7 @@ locals {
     "SELECT",
   ]
   privileges_rw = [
+    "CREATE",
     "DELETE",
     "DROP",
     "INSERT",
