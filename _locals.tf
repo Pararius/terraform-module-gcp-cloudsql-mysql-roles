@@ -28,6 +28,7 @@ locals {
     "CREATE",
     "DELETE",
     "DROP",
+    "INDEX",
     "INSERT",
     "REFERENCES",
     "SELECT",
