@@ -18,7 +18,9 @@ resource "random_password" "role" {
 }
 
 resource "mysql_user" "users" {
-  for_each = var.roles
+  for_each = {
+    for username, user in var.roles : username => user if !user.is_iam_user
+  }
 
   user               = each.key
   host               = "%"
