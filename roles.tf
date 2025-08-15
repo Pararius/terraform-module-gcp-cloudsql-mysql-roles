@@ -1,5 +1,5 @@
 resource "random_password" "role" {
-  for_each = var.roles
+  for_each = local.roles_built_in
 
   length      = 48
   min_lower   = 0
@@ -19,7 +19,7 @@ resource "random_password" "role" {
 
 resource "mysql_user" "users" {
   for_each = {
-    for username, user in var.roles : username => user if !user.is_iam_user
+    for username, user in local.roles_built_in : username => user
   }
 
   user               = each.key
@@ -32,8 +32,8 @@ resource "mysql_grant" "users_ro" {
     for databases_readers in local.databases_readers : "${databases_readers.database}.${databases_readers.role}" => databases_readers
   }
 
-  user       = each.value.role
-  host       = "%"
+  user       = each.value.is_iam ? split("@", each.value.role)[0] : each.value.role
+  host       = each.value.type == "CLOUD_IAM_GROUP" ? split("@", each.value.role)[1] : "%"
   database   = each.value.database
   privileges = local.privileges_ro
   table      = "*"
@@ -44,8 +44,8 @@ resource "mysql_grant" "users_rw" {
     for database_writer in local.databases_writers : "${database_writer.database}.${database_writer.role}" => database_writer
   }
 
-  user       = each.value.role
-  host       = "%"
+  user       = each.value.is_iam ? split("@", each.value.role)[0] : each.value.role
+  host       = each.value.type == "CLOUD_IAM_GROUP" ? split("@", each.value.role)[1] : "%"
   database   = each.value.database
   privileges = local.privileges_rw
   table      = "*"
